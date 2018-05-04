@@ -1,17 +1,20 @@
 {
     "name": "hfrahmann/opauth",
-    "type": "typo3-flow-package",
-    "description":"This is a package to use Opauth with your TYPO3 Flow project.",
-    "keywords": ["opauth", "login", "authentication", "facebook", "twitter", "google", "typo3", "flow", "typo3flow"],
+    "type": "neos-package",
+    "description":"This is a package to use Opauth with your Neos Flow project.",
+    "keywords": ["opauth", "login", "authentication", "facebook", "twitter", "google", "typo3", "flow", "typo3flow", "neos"],
     "homepage": "https://github.com/hfrahmann/Hfrahmann.Opauth",
     "version": "1.3.2",
     "license": "MIT",
     "authors":[{
         "name": "Hendrik Frahmann",
         "role": "Developer"
+    },{
+        "name": "Matthias Toscanelli",
+        "role": "Developer"
     }],
     "require": {
-        "typo3/flow": "*",
+        "neos/flow": "~5.0",
         "opauth/opauth": "@dev"
     },
     "autoload": {

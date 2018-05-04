@@ -2,13 +2,14 @@
 namespace Hfrahmann\Opauth\ViewHelpers;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Hfrahmann.Opauth".          *
+ * This script belongs to the Neos Flow package "Hfrahmann.Opauth".          *
  *                                                                        *
  *                                                                        */
 
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Fluid\Core\ViewHelper;
-use TYPO3\Flow\Annotations as Flow;
+use Hfrahmann\Opauth\Opauth\Configuration;
+use Neos\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\Fluid\Core\ViewHelper;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A view helper for creating URIs for OPAuth-Actions
@@ -27,7 +28,7 @@ use TYPO3\Flow\Annotations as Flow;
 class OpauthStrategyUriViewHelper extends AbstractViewHelper {
 
     /**
-     * @var \Hfrahmann\Opauth\Opauth\Configuration
+     * @var Configuration
      * @Flow\Inject
      */
     protected $opauthConfiguration;

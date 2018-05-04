@@ -2,26 +2,30 @@
 namespace Hfrahmann\Opauth\Controller;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Hfrahmann.Opauth".          *
+ * This script belongs to the Neos Flow package "Hfrahmann.Opauth".          *
  *                                                                        *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
+use Hfrahmann\Opauth\Opauth\Configuration;
+use Hfrahmann\Opauth\Opauth\Opauth;
+use Hfrahmann\Opauth\Service\OpauthAccountService;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController as BaseAbstractAuthenticationController;
 
-abstract class AbstractAuthenticationController extends \TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController {
+abstract class AbstractAuthenticationController extends BaseAbstractAuthenticationController {
 
     /**
-     * @var \Hfrahmann\Opauth\Opauth\Opauth
+     * @var Opauth
      */
     private $opauth;
 
     /**
-     * @var \Hfrahmann\Opauth\Service\OpauthAccountService
+     * @var OpauthAccountService
      */
     private $opauthAccountService;
 
     /**
-     * @var \Hfrahmann\Opauth\Opauth\Configuration
+     * @var Configuration
      */
     private $opauthConfiguration;
 
@@ -36,25 +40,25 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Security\Aut
     protected $opauthResponse = array();
 
     /**
-     * @param \Hfrahmann\Opauth\Opauth\Opauth $opauth
+     * @param Opauth $opauth
      */
-    public function injectOpauth(\Hfrahmann\Opauth\Opauth\Opauth $opauth) {
+    public function injectOpauth(Opauth $opauth) {
         $this->opauth = $opauth;
         if($opauth !== NULL && $opauth->getResponse() !== NULL)
             $this->opauthResponse = $opauth->getResponse()->getRawData();
     }
 
     /**
-     * @param \Hfrahmann\Opauth\Service\OpauthAccountService $opauthAccountService
+     * @param OpauthAccountService $opauthAccountService
      */
-    public function injectOpauthAccountService(\Hfrahmann\Opauth\Service\OpauthAccountService $opauthAccountService) {
+    public function injectOpauthAccountService(OpauthAccountService $opauthAccountService) {
         $this->opauthAccountService = $opauthAccountService;
     }
 
     /**
-     * @param \Hfrahmann\Opauth\Opauth\Configuration $opauthConfiguration
+     * @param Configuration $opauthConfiguration
      */
-    public function injectOpauthConfiguration(\Hfrahmann\Opauth\Opauth\Configuration $opauthConfiguration) {
+    public function injectOpauthConfiguration(Configuration $opauthConfiguration) {
         $this->opauthConfiguration = $opauthConfiguration;
     }
 
@@ -74,6 +78,8 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Security\Aut
      * Overridden authenticateAction method to check for an existing account with the Opauth data.
      *
      * @return string
+     *
+     * @throws \Hfrahmann\Opauth\Exception
      */
     public function authenticateAction() {
         $opauthResponse = $this->opauth->getResponse();
@@ -96,15 +102,15 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Security\Aut
     }
 
     /**
-     * This method is called when the account does not exist in the TYPO3 Flow Account Repository.
+     * This method is called when the account does not exist in the Neos Flow Account Repository.
      * You can show an addition formular for registration or add the account directly to the Account Repository.
      * If you add the account to the Repository you have to authenticate again manually.
      *
      * @param array $opauthResponseData Opauth Response with all sent data depends on the used strategy (facebook, twitter, ...)
-     * @param \TYPO3\Flow\Security\Account $opauthAccount A pre-generated account with the Opauth data
+     * @param Account $opauthAccount A pre-generated account with the Opauth data
      * @return void|string
      */
-    abstract protected function onOpauthAccountDoesNotExist(array $opauthResponseData, \TYPO3\Flow\Security\Account $opauthAccount);
+    abstract protected function onOpauthAccountDoesNotExist(array $opauthResponseData, Account $opauthAccount);
 
     /**
      * This method is called when the authentication was cancelled or another problem occurred at the provider.

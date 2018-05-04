@@ -2,11 +2,12 @@
 namespace Hfrahmann\Opauth\Opauth;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Hfrahmann.Opauth".          *
+ * This script belongs to the Neos Flow package "Hfrahmann.Opauth".          *
  *                                                                        *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
 
 /**
  * Class Opauth
@@ -26,7 +27,7 @@ class Opauth {
     protected $configuration;
 
     /**
-     * @var \TYPO3\Flow\Mvc\ActionRequest
+     * @var ActionRequest
      */
     protected $actionRequest;
 
@@ -36,9 +37,9 @@ class Opauth {
     protected $response;
 
     /**
-     * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest
+     * @param ActionRequest $actionRequest
      */
-    public function setActionRequest(\TYPO3\Flow\Mvc\ActionRequest $actionRequest) {
+    public function setActionRequest(ActionRequest $actionRequest) {
         $this->actionRequest = $actionRequest;
     }
 
@@ -62,7 +63,7 @@ class Opauth {
      * @return Response
      */
     public function getResponse() {
-        if($this->actionRequest instanceof \TYPO3\Flow\Mvc\ActionRequest && $this->actionRequest->hasArgument('opauth')) {
+        if($this->actionRequest instanceof ActionRequest && $this->actionRequest->hasArgument('opauth')) {
             $data = $this->actionRequest->getArgument('opauth');
             $response = unserialize(base64_decode($data));
             $this->response = new Response($response);

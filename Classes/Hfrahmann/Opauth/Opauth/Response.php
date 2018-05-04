@@ -2,11 +2,9 @@
 namespace Hfrahmann\Opauth\Opauth;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Hfrahmann.Opauth".          *
+ * This script belongs to the Neos Flow package "Hfrahmann.Opauth".          *
  *                                                                        *
  *                                                                        */
-
-use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Class OpauthResponse

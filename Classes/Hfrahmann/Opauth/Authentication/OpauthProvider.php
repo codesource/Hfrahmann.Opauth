@@ -2,44 +2,53 @@
 namespace Hfrahmann\Opauth\Authentication;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Hfrahmann.Opauth".          *
+ * This script belongs to the Neos Flow package "Hfrahmann.Opauth".          *
  *                                                                        *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
+use Hfrahmann\Opauth\Exception;
+use Hfrahmann\Opauth\Opauth\Configuration;
+use Hfrahmann\Opauth\Opauth\Opauth;
+use Hfrahmann\Opauth\Service\OpauthAccountService;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\AccountFactory;
+use Neos\Flow\Security\AccountRepository;
+use Neos\Flow\Security\Authentication\Provider\AbstractProvider;
+use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 
 /**
  * Class OpauthProvider
  * @package Hfrahmann\Opauth
  */
-class OpauthProvider extends \TYPO3\Flow\Security\Authentication\Provider\AbstractProvider {
+class OpauthProvider extends AbstractProvider {
 
     /**
-     * @var \TYPO3\Flow\Security\AccountFactory
+     * @var AccountFactory
      * @Flow\Inject
      */
     protected $accountFactory;
 
     /**
-     * @var \TYPO3\Flow\Security\AccountRepository
+     * @var AccountRepository
      * @Flow\Inject
      */
     protected $accountRepository;
 
     /**
-     * @var \Hfrahmann\Opauth\Opauth\Opauth
+     * @var Opauth
      * @Flow\Inject
      */
     protected $opauth;
 
     /**
-     * @var \Hfrahmann\Opauth\Opauth\Configuration
+     * @var Configuration
      * @Flow\Inject
      */
     protected $configuration;
 
     /**
-     * @var \Hfrahmann\Opauth\Service\OpauthAccountService
+     * @var OpauthAccountService
      * @Flow\Inject
      */
     protected $accountService;
@@ -50,19 +59,21 @@ class OpauthProvider extends \TYPO3\Flow\Security\Authentication\Provider\Abstra
      * @return array The classname of the token this provider is responsible for
      */
     public function getTokenClassNames() {
-        return array('Hfrahmann\Opauth\Authentication\OpauthToken');
+        return array(OpauthToken::class);
     }
 
     /**
      * Tries to authenticate the given token. Sets isAuthenticated to TRUE if authentication succeeded.
      *
-     * @param \TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
-     * @throws \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException
+     * @param TokenInterface $authenticationToken The token to be authenticated
      * @return void
+     *
+     * @throws UnsupportedAuthenticationTokenException
+     * @throws Exception
      */
-    public function authenticate(\TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken) {
+    public function authenticate(TokenInterface $authenticationToken) {
         if (!($authenticationToken instanceof OpauthToken)) {
-            throw new \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1381598908);
+            throw new UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1381598908);
         }
 
         $response = $this->opauth->getResponse();
@@ -75,10 +86,10 @@ class OpauthProvider extends \TYPO3\Flow\Security\Authentication\Provider\Abstra
 
             if($account !== NULL) {
                 $authenticationToken->setAccount($account);
-                $authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+                $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
             }
         } else {
-            $authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+            $authenticationToken->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
         }
     }
 

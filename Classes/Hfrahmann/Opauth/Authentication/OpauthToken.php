@@ -2,16 +2,18 @@
 namespace Hfrahmann\Opauth\Authentication;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Hfrahmann.Opauth".          *
+ * This script belongs to the Neos Flow package "Hfrahmann.Opauth".          *
  *                                                                        *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
+use Hfrahmann\Opauth\Opauth\Opauth;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Authentication\Token\AbstractToken;
 
 /**
  * An authentication token
  */
-class OpauthToken extends \TYPO3\Flow\Security\Authentication\Token\AbstractToken {
+class OpauthToken extends AbstractToken {
 
     /**
      * @var string
@@ -19,7 +21,7 @@ class OpauthToken extends \TYPO3\Flow\Security\Authentication\Token\AbstractToke
     protected $strategy = '';
 
     /**
-     * @var \Hfrahmann\Opauth\Opauth\Opauth
+     * @var Opauth
      */
     protected $opauth;
 
@@ -29,9 +31,9 @@ class OpauthToken extends \TYPO3\Flow\Security\Authentication\Token\AbstractToke
     protected $opauthResponse;
 
     /**
-     * @param \Hfrahmann\Opauth\Opauth\Opauth $opauth
+     * @param Opauth $opauth
      */
-    public function injectOpauth(\Hfrahmann\Opauth\Opauth\Opauth $opauth) {
+    public function injectOpauth(Opauth $opauth) {
         $this->opauth = $opauth;
         if($opauth !== NULL && $opauth->getResponse() !== NULL)
             $this->opauthResponse = $opauth->getResponse()->getRawData();
@@ -51,10 +53,11 @@ class OpauthToken extends \TYPO3\Flow\Security\Authentication\Token\AbstractToke
      * make sure that the authentication manager will (re-)authenticate the tokens with the current credentials.
      * Note: You should not persist the credentials!
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest The current request instance
+     * @param ActionRequest $actionRequest The current request instance
+     *
      * @return void
      */
-    public function updateCredentials(\TYPO3\Flow\Mvc\ActionRequest $actionRequest) {
+    public function updateCredentials(ActionRequest $actionRequest) {
         $this->opauth->setActionRequest($actionRequest);
         $response = $this->opauth->getResponse();
 

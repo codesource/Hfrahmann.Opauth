@@ -2,11 +2,14 @@
 namespace Hfrahmann\Opauth\Opauth;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Hfrahmann.Opauth".      *
+ * This script belongs to the Neos Flow package "Hfrahmann.Opauth".      *
  *                                                                        *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Mvc\ActionRequest;
 
 /**
  * Class Configuration
@@ -15,7 +18,7 @@ use TYPO3\Flow\Annotations as Flow;
 class Configuration {
 
     /**
-     * @var \TYPO3\Flow\Mvc\Routing\UriBuilder
+     * @var UriBuilder
      */
     protected $uriBuilder;
 
@@ -28,10 +31,10 @@ class Configuration {
      * Construct
      */
     public function __construct() {
-        $httpRequest = \TYPO3\Flow\Http\Request::createFromEnvironment();
-        $actionRequest = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
+        $httpRequest = Request::createFromEnvironment();
+        $actionRequest = new ActionRequest($httpRequest);
 
-        $this->uriBuilder = new \TYPO3\Flow\Mvc\Routing\UriBuilder();
+        $this->uriBuilder = new UriBuilder();
         $this->uriBuilder->setRequest($actionRequest);
     }
 

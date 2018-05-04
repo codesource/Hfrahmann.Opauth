@@ -1,6 +1,5 @@
 
-TYPO3:
-
+Neos:
   Flow:
     security:
       authentication:
