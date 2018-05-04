@@ -1,4 +1,5 @@
 <?php
+
 namespace Hfrahmann\Opauth\Opauth;
 
 /*                                                                        *
@@ -13,7 +14,8 @@ use Neos\Flow\Mvc\ActionRequest;
  * Class Opauth
  * @Flow\Scope("singleton")
  */
-class Opauth {
+class Opauth
+{
 
     /**
      * @var \Opauth
@@ -39,7 +41,8 @@ class Opauth {
     /**
      * @param ActionRequest $actionRequest
      */
-    public function setActionRequest(ActionRequest $actionRequest) {
+    public function setActionRequest(ActionRequest $actionRequest)
+    {
         $this->actionRequest = $actionRequest;
     }
 
@@ -48,12 +51,14 @@ class Opauth {
      *
      * @return \Opauth
      */
-    public function getOpauth() {
-        if($this->opauth === NULL) {
+    public function getOpauth()
+    {
+        if ($this->opauth === NULL) {
             $this->workarounds();
             $configuration = $this->configuration->getConfiguration();
             $this->opauth = new \Opauth($configuration, FALSE);
         }
+
         return $this->opauth;
     }
 
@@ -62,10 +67,17 @@ class Opauth {
      *
      * @return Response
      */
-    public function getResponse() {
-        if($this->actionRequest instanceof ActionRequest && $this->actionRequest->hasArgument('opauth')) {
+    public function getResponse()
+    {
+        if ($this->actionRequest instanceof ActionRequest && $this->actionRequest->hasArgument('opauth')) {
             $data = $this->actionRequest->getArgument('opauth');
             $response = unserialize(base64_decode($data));
+            if (!is_array($response)) {
+                $response = json_decode($data, true);
+            }
+            if (!is_array($response)) {
+                $response = [];
+            }
             $this->response = new Response($response);
         }
 
@@ -77,10 +89,11 @@ class Opauth {
      *
      * @return void
      */
-    protected function workarounds() {
+    protected function workarounds()
+    {
 
         // When canceling a Twitter-Authentication, Flow returns a notice.
-        if(isset($_REQUEST['oauth_token']) == FALSE)
+        if (isset($_REQUEST['oauth_token']) == FALSE)
             $_REQUEST['oauth_token'] = '';
     }
 
