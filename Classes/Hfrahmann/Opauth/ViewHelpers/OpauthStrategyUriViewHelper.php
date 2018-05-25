@@ -7,8 +7,7 @@ namespace Hfrahmann\Opauth\ViewHelpers;
  *                                                                        */
 
 use Hfrahmann\Opauth\Opauth\Configuration;
-use Neos\Fluid\Core\ViewHelper\AbstractViewHelper;
-use Neos\Fluid\Core\ViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Flow\Annotations as Flow;
 
 /**
