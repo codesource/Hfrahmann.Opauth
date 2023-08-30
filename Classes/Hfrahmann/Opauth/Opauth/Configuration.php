@@ -7,32 +7,36 @@ namespace Hfrahmann\Opauth\Opauth;
  *                                                                        */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Exception;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Class Configuration
  * @Flow\Scope("singleton")
  */
-class Configuration {
+class Configuration
+{
 
     /**
      * @var UriBuilder
      */
-    protected $uriBuilder;
+    protected UriBuilder $uriBuilder;
 
     /**
      * @var array
      */
-    protected $configuration = array();
+    protected array $configuration = [];
 
     /**
      * Construct
      */
-    public function __construct() {
-        $httpRequest = Request::createFromEnvironment();
-        $actionRequest = new ActionRequest($httpRequest);
+    public function __construct(ServerRequestInterface $request)
+    {
+        //TODO: Make sure it's working
+        $actionRequest = ActionRequest::fromHttpRequest($request);
 
         $this->uriBuilder = new UriBuilder();
         $this->uriBuilder->setRequest($actionRequest);
@@ -40,8 +44,12 @@ class Configuration {
 
     /**
      * @param array $settings
+     *
+     * @throws Exception
+     * @throws MissingActionNameException
      */
-    public function injectSettings(array $settings) {
+    public function injectSettings(array $settings): void
+    {
         $this->configuration = $this->createConfiguration($settings);
     }
 
@@ -50,7 +58,8 @@ class Configuration {
      *
      * @return array
      */
-    public function getConfiguration() {
+    public function getConfiguration(): array
+    {
         return $this->configuration;
     }
 
@@ -59,28 +68,37 @@ class Configuration {
      *
      * @return string|array|null
      */
-    public function getDefaultRoleIdentifier() {
+    public function getDefaultRoleIdentifier(): array|string|null
+    {
         $key = 'defaultRoleIdentifier';
-        return isset($this->configuration[$key]) ? $this->configuration[$key] : NULL;
+
+        return $this->configuration[$key] ?? NULL;
     }
 
     /**
      * Returns the authentication provider name that will do the authentication.
      *
-     * @return string
+     * @return string|null
      */
-    public function getAuthenticationProviderName() {
+    public function getAuthenticationProviderName(): ?string
+    {
         $key = 'authenticationProviderName';
-        return isset($this->configuration[$key]) ? $this->configuration[$key] : NULL;
+
+        return $this->configuration[$key] ?? null;
     }
 
     /**
      * Merging the configuration of the Settings.yaml with some default values for OPAuth
      *
      * @param array $configuration
+     *
      * @return array
+     *
+     * @throws Exception
+     * @throws MissingActionNameException
      */
-    protected function createConfiguration(array $configuration) {
+    protected function createConfiguration(array $configuration): array
+    {
         $route = $configuration['authenticationControllerRoute'];
 
         $opauthBasePath = $this->uriBuilder->uriFor(
@@ -130,11 +148,15 @@ class Configuration {
      *
      * @param array $routeArray
      * @param string $key
-     * @return string
+     *
+     * @return string|null
      */
-    protected function getRoutePart(&$routeArray, $key) {
-        if(array_key_exists($key, $routeArray) && strlen($routeArray[$key]) > 0)
+    protected function getRoutePart(array $routeArray, string $key): ?string
+    {
+        if (array_key_exists($key, $routeArray) && strlen($routeArray[$key]) > 0) {
             return $routeArray[$key];
+        }
+
         return NULL;
     }
 
@@ -144,10 +166,11 @@ class Configuration {
      * @param array $configuration
      * @return string
      */
-    protected function getStrategyDirectory(array $configuration) {
-        if(isset($configuration['strategyDirectory']) && strlen($configuration['strategyDirectory']) > 0) {
+    protected function getStrategyDirectory(array $configuration)
+    {
+        if (isset($configuration['strategyDirectory']) && strlen($configuration['strategyDirectory']) > 0) {
             $strategyDirectory = $configuration['strategyDirectory'];
-            if(substr($strategyDirectory, 1) == '/')
+            if (substr($strategyDirectory, 1) == '/')
                 return $strategyDirectory;
             else
                 return FLOW_PATH_ROOT . $strategyDirectory;
@@ -158,5 +181,3 @@ class Configuration {
     }
 
 }
-
-?>

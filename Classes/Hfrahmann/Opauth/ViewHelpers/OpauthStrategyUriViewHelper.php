@@ -27,23 +27,21 @@ use Neos\Flow\Annotations as Flow;
 class OpauthStrategyUriViewHelper extends AbstractViewHelper {
 
     /**
-     * @var Configuration
      * @Flow\Inject
+     * @var Configuration
      */
-    protected $opauthConfiguration;
+    protected Configuration $opauthConfiguration;
 
     /**
      * @param string $strategy
+     *
      * @return string
      */
-    public function render($strategy = '') {
+    public function render(string $strategy = ''): string
+    {
         $opauthSettings = $this->opauthConfiguration->getConfiguration();
 
-        $uri = $opauthSettings['path'] . $strategy;
-
-        return $uri;
+        return $opauthSettings['path'] . $strategy;
     }
 
 }
-
-?>

@@ -8,7 +8,9 @@ namespace Hfrahmann\Opauth\Authentication;
 
 use Hfrahmann\Opauth\Opauth\Opauth;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Security\Authentication\Token\AbstractToken;
+use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 
 /**
  * An authentication token
@@ -18,31 +20,38 @@ class OpauthToken extends AbstractToken {
     /**
      * @var string
      */
-    protected $strategy = '';
+    protected string $strategy = '';
 
     /**
      * @var Opauth
      */
-    protected $opauth;
+    protected Opauth $opauth;
 
     /**
      * @var array
      */
-    protected $opauthResponse;
+    protected array $opauthResponse;
 
     /**
-     * @param Opauth $opauth
+     * @param Opauth|null $opauth
      */
-    public function injectOpauth(Opauth $opauth) {
+    public function injectOpauth(?Opauth $opauth): void
+    {
         $this->opauth = $opauth;
-        if($opauth !== NULL && $opauth->getResponse() !== NULL)
-            $this->opauthResponse = $opauth->getResponse()->getRawData();
+
+        try {
+            if ($opauth?->getResponse() !== null)
+                $this->opauthResponse = $opauth->getResponse()->getRawData();
+        } catch (NoSuchArgumentException $e) {
+            $this->opauthResponse = [];
+        }
     }
 
     /**
      * @return array Returns the response data from opauth
      */
-    public function getOpauthResponse() {
+    public function getOpauthResponse(): array
+    {
         return $this->opauthResponse;
     }
 
@@ -56,8 +65,12 @@ class OpauthToken extends AbstractToken {
      * @param ActionRequest $actionRequest The current request instance
      *
      * @return void
+     *
+     * @throws NoSuchArgumentException
+     * @throws InvalidAuthenticationStatusException
      */
-    public function updateCredentials(ActionRequest $actionRequest) {
+    public function updateCredentials(ActionRequest $actionRequest): void
+    {
         $this->opauth->setActionRequest($actionRequest);
         $response = $this->opauth->getResponse();
 
@@ -65,7 +78,6 @@ class OpauthToken extends AbstractToken {
             $this->strategy = $response->getStrategy();
             $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
         }
-        return;
     }
 
     /**
@@ -75,5 +87,3 @@ class OpauthToken extends AbstractToken {
         return 'OpauthToken: ' . $this->strategy;
     }
 }
-
-?>

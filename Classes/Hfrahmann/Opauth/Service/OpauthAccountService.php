@@ -1,4 +1,5 @@
 <?php
+
 namespace Hfrahmann\Opauth\Service;
 
 /*                                                                        *
@@ -18,43 +19,45 @@ use Neos\Flow\Security\AccountRepository;
  * Class OpauthResponse
  * @Flow\Scope("singleton")
  */
-class OpauthAccountService {
+class OpauthAccountService
+{
 
     /**
      * @var AccountFactory
      * @Flow\Inject
      */
-    protected $accountFactory;
+    protected AccountFactory $accountFactory;
 
     /**
      * @var AccountRepository
      * @Flow\Inject
      */
-    protected $accountRepository;
+    protected AccountRepository $accountRepository;
 
     /**
      * @var Configuration
      * @Flow\Inject
      */
-    protected $configuration;
+    protected Configuration $configuration;
 
     /**
      * Creates an account identifier with the strategy and the unique userID.
      *
-     * @param Response $opauthResponse
+     * @param Response|null $opauthResponse
      *
      * @return string
      *
      * @throws Exception
      */
-    public function createAccountIdentifier(Response $opauthResponse) {
-        if($opauthResponse == NULL)
+    public function createAccountIdentifier(?Response $opauthResponse): string
+    {
+        if ($opauthResponse == NULL)
             throw new Exception("OpauthResponse cannot be NULL.", 1381596920);
 
         $strategy = $opauthResponse->getStrategy();
         $userID = $opauthResponse->getUserID();
 
-        if(strlen($strategy) > 0 && strlen($userID) > 0) {
+        if (strlen($strategy) > 0 && strlen($userID) > 0) {
             return $strategy . ':' . $userID;
         } else {
             throw new Exception("No Strategy or UserID given.", 1381596915);
@@ -65,14 +68,15 @@ class OpauthAccountService {
      * Return an OPAuth account.
      * If an account with the given data does not exist a new account will be created.
      *
-     * @param Response $opauthResponse
+     * @param Response|null $opauthResponse
      *
      * @return Account
      *
      * @throws Exception
      */
-    public function getAccount(Response $opauthResponse) {
-        if($opauthResponse == NULL)
+    public function getAccount(?Response $opauthResponse): Account
+    {
+        if ($opauthResponse == NULL)
             throw new Exception("OpauthResponse cannot be NULL.", 1381596921);
 
         $accountIdentifier = $this->createAccountIdentifier($opauthResponse);
@@ -80,12 +84,12 @@ class OpauthAccountService {
 
         $account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName);
 
-        if($account === NULL) {
+        if ($account === NULL) {
             $roleIdentifier = $this->configuration->getDefaultRoleIdentifier();
             $roleIdentifierArray = array();
-            if(is_array($roleIdentifier))
+            if (is_array($roleIdentifier))
                 $roleIdentifierArray = $roleIdentifier;
-            if(is_string($roleIdentifier))
+            if (is_string($roleIdentifier))
                 $roleIdentifierArray = array($roleIdentifier);
 
             $account = $this->accountFactory->createAccountWithPassword($accountIdentifier, NULL, $roleIdentifierArray, $authenticationProviderName);
@@ -100,14 +104,14 @@ class OpauthAccountService {
      * @param Account $account
      * @return bool
      */
-    public function doesAccountExist(Account $account) {
+    public function doesAccountExist(Account $account)
+    {
         $accountIdentifier = $account->getAccountIdentifier();
         $authenticationProviderName = $account->getAuthenticationProviderName();
 
         $existingAccount = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName);
+
         return ($existingAccount !== NULL);
     }
 
 }
-
-?>

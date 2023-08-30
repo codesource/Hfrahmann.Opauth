@@ -9,6 +9,8 @@ namespace Hfrahmann\Opauth\Opauth;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
+use Opauth as OpauthBase;
 
 /**
  * Class Opauth
@@ -18,30 +20,30 @@ class Opauth
 {
 
     /**
-     * @var \Opauth
+     * @var OpauthBase|null
      */
-    protected $opauth;
+    protected ?OpauthBase $opauth = null;
 
     /**
      * @var Configuration
      * @Flow\Inject
      */
-    protected $configuration;
+    protected Configuration $configuration;
 
     /**
      * @var ActionRequest
      */
-    protected $actionRequest;
+    protected ActionRequest $actionRequest;
 
     /**
-     * @var Response
+     * @var Response|null
      */
-    protected $response;
+    protected ?Response $response;
 
     /**
      * @param ActionRequest $actionRequest
      */
-    public function setActionRequest(ActionRequest $actionRequest)
+    public function setActionRequest(ActionRequest $actionRequest): void
     {
         $this->actionRequest = $actionRequest;
     }
@@ -49,14 +51,14 @@ class Opauth
     /**
      * Returns the real OPAuth object
      *
-     * @return \Opauth
+     * @return OpauthBase
      */
-    public function getOpauth()
+    public function getOpauth(): OpauthBase
     {
-        if ($this->opauth === NULL) {
+        if ($this->opauth === null) {
             $this->workarounds();
             $configuration = $this->configuration->getConfiguration();
-            $this->opauth = new \Opauth($configuration, FALSE);
+            $this->opauth = new OpauthBase($configuration, FALSE);
         }
 
         return $this->opauth;
@@ -65,11 +67,13 @@ class Opauth
     /**
      * Returns an Response object containing the OPAuth data
      *
-     * @return Response
+     * @return Response|null
+     *
+     * @throws NoSuchArgumentException
      */
-    public function getResponse()
+    public function getResponse(): ?Response
     {
-        if ($this->actionRequest instanceof ActionRequest && $this->actionRequest->hasArgument('opauth')) {
+        if ($this->actionRequest->hasArgument('opauth')) {
             $data = $this->actionRequest->getArgument('opauth');
             $response = unserialize(base64_decode($data));
             if (!is_array($response)) {
@@ -89,14 +93,11 @@ class Opauth
      *
      * @return void
      */
-    protected function workarounds()
+    protected function workarounds(): void
     {
-
         // When canceling a Twitter-Authentication, Flow returns a notice.
-        if (isset($_REQUEST['oauth_token']) == FALSE)
+        if (!isset($_REQUEST['oauth_token']))
             $_REQUEST['oauth_token'] = '';
     }
 
 }
-
-?>

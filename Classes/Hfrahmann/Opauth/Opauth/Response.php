@@ -14,7 +14,7 @@ class Response {
     /**
      * @var array
      */
-    protected $responseData = array();
+    protected array $responseData = [];
 
     /**
      * @param array $responseData
@@ -26,7 +26,8 @@ class Response {
     /**
      * @return array
      */
-    public function getRawData() {
+    public function getRawData(): array
+    {
         return $this->responseData;
     }
 
@@ -35,7 +36,8 @@ class Response {
      *
      * @return string
      */
-    public function getStrategy() {
+    public function getStrategy(): string
+    {
         if(isset($this->responseData['auth']['provider']))
             return $this->responseData['auth']['provider'];
         return '';
@@ -46,7 +48,8 @@ class Response {
      *
      * @return string
      */
-    public function getUserID() {
+    public function getUserID(): string
+    {
         if(isset($this->responseData['auth']['uid']))
             return (string)$this->responseData['auth']['uid'];
         return '';
@@ -57,7 +60,8 @@ class Response {
      *
      * @return bool
      */
-    public function isAuthenticationSucceeded() {
+    public function isAuthenticationSucceeded(): bool
+    {
         if(array_key_exists('auth', $this->responseData) && array_key_exists('error', $this->responseData) === FALSE)
             return TRUE;
         return FALSE;

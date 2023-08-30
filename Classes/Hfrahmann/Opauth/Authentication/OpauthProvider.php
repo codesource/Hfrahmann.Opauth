@@ -11,10 +11,12 @@ use Hfrahmann\Opauth\Opauth\Configuration;
 use Hfrahmann\Opauth\Opauth\Opauth;
 use Hfrahmann\Opauth\Service\OpauthAccountService;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Security\AccountFactory;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Authentication\Provider\AbstractProvider;
 use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 
 /**
@@ -24,54 +26,59 @@ use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 class OpauthProvider extends AbstractProvider {
 
     /**
+     * @Flow\Inject
      * @var AccountFactory
-     * @Flow\Inject
      */
-    protected $accountFactory;
+    protected AccountFactory $accountFactory;
 
     /**
+     * @Flow\Inject
      * @var AccountRepository
-     * @Flow\Inject
      */
-    protected $accountRepository;
+    protected AccountRepository $accountRepository;
 
     /**
+     * @Flow\Inject
      * @var Opauth
-     * @Flow\Inject
      */
-    protected $opauth;
+    protected Opauth $opauth;
 
     /**
+     * @Flow\Inject
      * @var Configuration
-     * @Flow\Inject
      */
-    protected $configuration;
+    protected Configuration $configuration;
 
     /**
-     * @var OpauthAccountService
      * @Flow\Inject
+     * @var OpauthAccountService
      */
-    protected $accountService;
+    protected OpauthAccountService $accountService;
 
     /**
      * Returns the classnames of the tokens this provider is responsible for.
      *
      * @return array The classname of the token this provider is responsible for
      */
-    public function getTokenClassNames() {
-        return array(OpauthToken::class);
+    public function getTokenClassNames(): array
+    {
+        return [OpauthToken::class];
     }
 
     /**
      * Tries to authenticate the given token. Sets isAuthenticated to TRUE if authentication succeeded.
      *
      * @param TokenInterface $authenticationToken The token to be authenticated
+     *
      * @return void
      *
-     * @throws UnsupportedAuthenticationTokenException
      * @throws Exception
+     * @throws UnsupportedAuthenticationTokenException
+     * @throws NoSuchArgumentException
+     * @throws InvalidAuthenticationStatusException
      */
-    public function authenticate(TokenInterface $authenticationToken) {
+    public function authenticate(TokenInterface $authenticationToken): void
+    {
         if (!($authenticationToken instanceof OpauthToken)) {
             throw new UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1381598908);
         }
@@ -94,5 +101,3 @@ class OpauthProvider extends AbstractProvider {
     }
 
 }
-
-?>
