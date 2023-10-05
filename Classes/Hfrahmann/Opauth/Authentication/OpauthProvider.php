@@ -11,7 +11,6 @@ use Hfrahmann\Opauth\Opauth\Configuration;
 use Hfrahmann\Opauth\Opauth\Opauth;
 use Hfrahmann\Opauth\Service\OpauthAccountService;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Security\AccountFactory;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Authentication\Provider\AbstractProvider;
@@ -73,9 +72,8 @@ class OpauthProvider extends AbstractProvider {
      * @return void
      *
      * @throws Exception
-     * @throws UnsupportedAuthenticationTokenException
-     * @throws NoSuchArgumentException
      * @throws InvalidAuthenticationStatusException
+     * @throws UnsupportedAuthenticationTokenException
      */
     public function authenticate(TokenInterface $authenticationToken): void
     {

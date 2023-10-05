@@ -10,7 +10,6 @@ use Hfrahmann\Opauth\Exception;
 use Hfrahmann\Opauth\Opauth\Configuration;
 use Hfrahmann\Opauth\Opauth\Opauth;
 use Hfrahmann\Opauth\Service\OpauthAccountService;
-use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController as BaseAbstractAuthenticationController;
 
@@ -45,7 +44,6 @@ abstract class AbstractAuthenticationController extends BaseAbstractAuthenticati
     /**
      * @param Opauth|null $opauth
      *
-     * @throws NoSuchArgumentException
      */
     public function injectOpauth(?Opauth $opauth): void
     {
@@ -88,12 +86,11 @@ abstract class AbstractAuthenticationController extends BaseAbstractAuthenticati
     /**
      * Overridden authenticateAction method to check for an existing account with the Opauth data.
      *
-     * @return string
+     * @return string|null
      *
-     * @throws NoSuchArgumentException
      * @throws Exception
      */
-    public function authenticateAction()
+    public function authenticateAction(): ?string
     {
         $opauthResponse = $this->opauth->getResponse();
 

@@ -104,7 +104,7 @@ class OpauthAccountService
      * @param Account $account
      * @return bool
      */
-    public function doesAccountExist(Account $account)
+    public function doesAccountExist(Account $account): bool
     {
         $accountIdentifier = $account->getAccountIdentifier();
         $authenticationProviderName = $account->getAuthenticationProviderName();

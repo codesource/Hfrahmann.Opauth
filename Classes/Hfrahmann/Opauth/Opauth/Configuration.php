@@ -6,12 +6,12 @@ namespace Hfrahmann\Opauth\Opauth;
  *                                                                        *
  *                                                                        */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\ActionRequest;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Class Configuration
@@ -33,10 +33,10 @@ class Configuration
     /**
      * Construct
      */
-    public function __construct(ServerRequestInterface $request)
+    public function __construct()
     {
         //TODO: Make sure it's working
-        $actionRequest = ActionRequest::fromHttpRequest($request);
+        $actionRequest = ActionRequest::fromHttpRequest(ServerRequest::fromGlobals());
 
         $this->uriBuilder = new UriBuilder();
         $this->uriBuilder->setRequest($actionRequest);
@@ -166,7 +166,7 @@ class Configuration
      * @param array $configuration
      * @return string
      */
-    protected function getStrategyDirectory(array $configuration)
+    protected function getStrategyDirectory(array $configuration): string
     {
         if (isset($configuration['strategyDirectory']) && strlen($configuration['strategyDirectory']) > 0) {
             $strategyDirectory = $configuration['strategyDirectory'];

@@ -23,14 +23,14 @@ class OpauthToken extends AbstractToken {
     protected string $strategy = '';
 
     /**
-     * @var Opauth
+     * @var Opauth|null
      */
-    protected Opauth $opauth;
+    protected ?Opauth $opauth = null;
 
     /**
      * @var array
      */
-    protected array $opauthResponse;
+    protected array $opauthResponse = [];
 
     /**
      * @param Opauth|null $opauth
@@ -42,7 +42,7 @@ class OpauthToken extends AbstractToken {
         try {
             if ($opauth?->getResponse() !== null)
                 $this->opauthResponse = $opauth->getResponse()->getRawData();
-        } catch (NoSuchArgumentException $e) {
+        } catch (NoSuchArgumentException) {
             $this->opauthResponse = [];
         }
     }
@@ -66,7 +66,6 @@ class OpauthToken extends AbstractToken {
      *
      * @return void
      *
-     * @throws NoSuchArgumentException
      * @throws InvalidAuthenticationStatusException
      */
     public function updateCredentials(ActionRequest $actionRequest): void

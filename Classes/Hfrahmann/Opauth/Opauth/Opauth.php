@@ -7,9 +7,9 @@ namespace Hfrahmann\Opauth\Opauth;
  *                                                                        *
  *                                                                        */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Opauth as OpauthBase;
 
 /**
@@ -31,14 +31,14 @@ class Opauth
     protected Configuration $configuration;
 
     /**
-     * @var ActionRequest
+     * @var ActionRequest|null
      */
-    protected ActionRequest $actionRequest;
+    protected ?ActionRequest $actionRequest = null;
 
     /**
      * @var Response|null
      */
-    protected ?Response $response;
+    protected ?Response $response = null;
 
     /**
      * @param ActionRequest $actionRequest
@@ -68,13 +68,12 @@ class Opauth
      * Returns an Response object containing the OPAuth data
      *
      * @return Response|null
-     *
-     * @throws NoSuchArgumentException
      */
     public function getResponse(): ?Response
     {
-        if ($this->actionRequest->hasArgument('opauth')) {
-            $data = $this->actionRequest->getArgument('opauth');
+        $data = ServerRequest::fromGlobals()->getAttribute('opauth');
+        if ($data) {
+            //$data = $this->actionRequest->getArgument('opauth');
             $response = unserialize(base64_decode($data));
             if (!is_array($response)) {
                 $response = json_decode($data, true);
