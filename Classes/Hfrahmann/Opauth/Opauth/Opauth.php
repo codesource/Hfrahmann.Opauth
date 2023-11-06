@@ -72,7 +72,7 @@ class Opauth
     public function getResponse(): ?Response
     {
         $data = ServerRequest::fromGlobals()->getParsedBody();
-        if ($data && $data['opauth']) {
+        if ($data && isset($data['opauth'])) {
             $response = null;
             $parsedData = base64_decode($data['opauth']) ?: $data['opauth'];
             try{
