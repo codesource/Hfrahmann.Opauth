@@ -71,12 +71,16 @@ class Opauth
      */
     public function getResponse(): ?Response
     {
-        $data = ServerRequest::fromGlobals()->getAttribute('opauth');
-        if ($data) {
-            //$data = $this->actionRequest->getArgument('opauth');
-            $response = unserialize(base64_decode($data));
+        $data = ServerRequest::fromGlobals()->getParsedBody();
+        if ($data && $data['opauth']) {
+            $response = null;
+            $parsedData = base64_decode($data['opauth']) ?: $data['opauth'];
+            try{
+                $response = unserialize($parsedData, ['allowed_classes' => false]);
+            }catch(\Exception){
+            }
             if (!is_array($response)) {
-                $response = json_decode($data, true);
+                $response = json_decode($parsedData, true);
             }
             if (!is_array($response)) {
                 $response = [];
